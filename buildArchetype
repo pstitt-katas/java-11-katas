@@ -1,0 +1,5 @@
+mvn verify archetype:create-from-project && {
+	cd target/generated-sources/archetype
+	setVersion
+	mvn deploy
+}
