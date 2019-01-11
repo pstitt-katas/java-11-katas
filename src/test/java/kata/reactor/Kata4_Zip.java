@@ -5,6 +5,7 @@ import reactor.core.publisher.Flux;
 import reactor.core.publisher.Mono;
 import reactor.test.StepVerifier;
 import reactor.util.function.Tuple2;
+import reactor.util.function.Tuples;
 
 import java.time.Duration;
 
@@ -17,13 +18,14 @@ public class Kata4_Zip {
         Flux<Tuple2<Integer, Integer>> zipped = flux1.zipWith(flux2);
 
         StepVerifier.create(zipped)
-                .expectNextMatches(t -> t.getT1() == 1 && t.getT2() == 0)
-                .expectNextMatches(t -> t.getT1() == 2 && t.getT2() == 1)
-                .expectNextMatches(t -> t.getT1() == 3 && t.getT2() == 2)
-                .expectNextMatches(t -> t.getT1() == 4 && t.getT2() == 3)
-                .expectNextMatches(t -> t.getT1() == 5 && t.getT2() == 4)
-                .expectComplete()
-                .verify();
+                .expectNext(
+                        Tuples.of(1, 0),
+                        Tuples.of(2, 1),
+                        Tuples.of(3, 2),
+                        Tuples.of(4, 3),
+                        Tuples.of(5, 4)
+                )
+                .verifyComplete();
     }
 
     @Test
@@ -33,12 +35,13 @@ public class Kata4_Zip {
         Flux<Tuple2<Integer, Integer>> zipped = flux1.zipWith(flux2);
 
         StepVerifier.create(zipped)
-                .expectNextMatches(t -> t.getT1() == 1 && t.getT2() == 0)
-                .expectNextMatches(t -> t.getT1() == 2 && t.getT2() == 1)
-                .expectNextMatches(t -> t.getT1() == 3 && t.getT2() == 2)
-                .expectNextMatches(t -> t.getT1() == 4 && t.getT2() == 3)
-                .expectComplete()
-                .verify();
+                .expectNext(
+                        Tuples.of(1, 0),
+                        Tuples.of(2, 1),
+                        Tuples.of(3, 2),
+                        Tuples.of(4, 3)
+                )
+                .verifyComplete();
     }
 
     @Test
@@ -50,9 +53,8 @@ public class Kata4_Zip {
         Mono<Tuple2<Integer, Integer>> zippedMono = mono1.zipWith(mono2);
 
         StepVerifier.create(zippedMono)
-                .expectNextMatches(t -> t.getT1() == INPUT1 && t.getT2() == INPUT2)
-                .expectComplete()
-                .verify();
+                .expectNext(Tuples.of(INPUT1, INPUT2))
+                .verifyComplete();
     }
 
     @Test
@@ -64,8 +66,7 @@ public class Kata4_Zip {
         Mono<Tuple2<Integer, Integer>> zippedMono = mono1.zipWith(mono2);
 
         StepVerifier.create(zippedMono)
-                .expectNextMatches(t -> t.getT1() == INPUT1 && t.getT2() == INPUT2)
-                .expectComplete()
-                .verify();
+                .expectNext(Tuples.of(INPUT1, INPUT2))
+                .verifyComplete();
     }
 }

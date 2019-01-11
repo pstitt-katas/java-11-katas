@@ -8,9 +8,7 @@ import reactor.core.scheduler.Schedulers;
 import reactor.test.StepVerifier;
 
 import java.util.Collection;
-import java.util.HashSet;
 import java.util.Set;
-import java.util.function.BiFunction;
 import java.util.stream.Collectors;
 
 import static java.lang.String.format;
@@ -27,8 +25,7 @@ public class Kata5_Threading {
 
         StepVerifier.create(threadsMono)
                 .expectNextMatches(threads -> threads.size() == 1 && threadsEachMatch(threads, "main"))
-                .expectComplete()
-                .verify();
+                .verifyComplete();
     }
 
     @Test
@@ -41,8 +38,7 @@ public class Kata5_Threading {
 
         StepVerifier.create(threadsMono)
                 .expectNextMatches(threads -> threads.size() == 1 && threadsEachMatch(threads, "parallel-[0-9]+"))
-                .expectComplete()
-                .verify();
+                .verifyComplete();
     }
 
     @Test
@@ -55,8 +51,7 @@ public class Kata5_Threading {
 
         StepVerifier.create(threadsMono)
                 .expectNextMatches(threads -> threads.size() == 1 && threadsEachMatch(threads, "parallel-[0-9]+"))
-                .expectComplete()
-                .verify();
+                .verifyComplete();
     }
 
     @Test
@@ -71,22 +66,11 @@ public class Kata5_Threading {
 
         StepVerifier.create(mono)
                 .expectNextMatches(threads -> threads.size() > 1 && threadsEachMatch(threads, EXPECTED_THREAD_REGEX))
-                .expectComplete()
-                .verify();
+                .verifyComplete();
     }
 
     private Set<String> toSet(Collection<String> coll) {
         return coll.stream().collect(Collectors.toSet());
-    }
-
-    class Threads extends HashSet<String> {
-    }
-
-    private BiFunction<Threads, String, Threads> addThread() {
-        return (threads, thread) -> {
-            threads.add(thread);
-            return threads;
-        };
     }
 
     private boolean threadsEachMatch(Collection<String> threads, String regex) {

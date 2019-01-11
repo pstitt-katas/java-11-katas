@@ -13,25 +13,22 @@ public class Kata1_IntroToMono {
         @Test
         void noOp_using_block() {
             Integer INPUT = 1;
-            Integer expected = INPUT;
 
             Integer output =
                     Mono.just(INPUT)
                             .block();
 
-            assertEquals(expected, output);
+            assertEquals(INPUT, output);
         }
 
         @Test
         void noOp_using_StepVerifier() {
             Integer INPUT = 1;
-            Integer expected = INPUT;
             Mono mono = Mono.just(INPUT);
 
             StepVerifier.create(mono)
-                    .expectNext(expected)
-                    .expectComplete()
-                    .verify();
+                    .expectNext(INPUT)
+                    .verifyComplete();
         }
     }
 
@@ -40,27 +37,23 @@ public class Kata1_IntroToMono {
         @Test
         void mapIntegerToString() {
             Integer INPUT = 1;
-            String expected = Integer.toString(INPUT);
             Mono mono = Mono.just(INPUT)
                     .map(i -> Integer.toString(i));
 
             StepVerifier.create(mono)
-                    .expectNext(expected)
-                    .expectComplete()
-                    .verify();
+                    .expectNext("1")
+                    .verifyComplete();
         }
 
         @Test
         void flatMapIntegerMonoToString() {
             Integer INPUT = 1;
-            String expected = Integer.toString(INPUT);
             Mono mono = Mono.just(INPUT)
                     .flatMap(i -> Mono.just(Integer.toString(i)));
 
             StepVerifier.create(mono)
-                    .expectNext(expected)
-                    .expectComplete()
-                    .verify();
+                    .expectNext("1")
+                    .verifyComplete();
         }
     }
 }

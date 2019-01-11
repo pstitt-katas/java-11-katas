@@ -15,8 +15,7 @@ public class Kata3_ErrorHandling {
         Mono mono = Mono.error(new RuntimeException(ERROR));
 
         StepVerifier.create(mono)
-                .expectErrorMatches(x -> x instanceof RuntimeException && x.getMessage().equals(ERROR))
-                .verify();
+                .verifyErrorMatches(x -> x instanceof RuntimeException && x.getMessage().equals(ERROR));
     }
 
     @Test
@@ -28,8 +27,7 @@ public class Kata3_ErrorHandling {
 
         StepVerifier.create(mono)
                 .expectNext(DEFAULT_VALUE)
-                .expectComplete()
-                .verify();
+                .verifyComplete();
     }
 
     @Test
@@ -40,8 +38,7 @@ public class Kata3_ErrorHandling {
                 .flatMap(i -> Mono.error(new RuntimeException(ERROR)));
 
         StepVerifier.create(mono)
-                .expectErrorMatches(x -> x instanceof RuntimeException && x.getMessage().equals(ERROR))
-                .verify();
+                .verifyErrorMatches(x -> x instanceof RuntimeException && x.getMessage().equals(ERROR));
     }
 
     @Test
@@ -56,8 +53,7 @@ public class Kata3_ErrorHandling {
 
         StepVerifier.create(mono)
                 .expectNext(DEFAULT_VALUE)
-                .expectComplete()
-                .verify();
+                .verifyComplete();
     }
 
     @Test
@@ -71,8 +67,7 @@ public class Kata3_ErrorHandling {
 
         StepVerifier.create(mono)
                 .expectNext(DEFAULT_VALUE)
-                .expectComplete()
-                .verify();
+                .verifyComplete();
     }
 
     @Test
@@ -82,19 +77,17 @@ public class Kata3_ErrorHandling {
 
         StepVerifier.create(flux)
                 .expectNext(-5, -10)
-                .expectError(ArithmeticException.class)
-                .verify();
+                .verifyError(ArithmeticException.class);
     }
 
     @Test
     void divideByZero_then_continue() {
         Flux<Integer> flux = Flux.range(-2, 5)
                 .map(i -> (10/i))
-                .onErrorContinue((error, i) -> log.error("error on element {}", i, error));
+                .onErrorContinue((error, i) -> log.error("got divide by zero error on element {}", i));
 
         StepVerifier.create(flux)
                 .expectNext(-5, -10, 10, 5)
-                .expectComplete()
-                .verify();
+                .verifyComplete();
     }
 }

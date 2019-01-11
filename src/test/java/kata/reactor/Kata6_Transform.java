@@ -13,8 +13,7 @@ public class Kata6_Transform {
 
         StepVerifier.create(flux)
                 .expectNext(EXPECTED)
-                .expectComplete()
-                .verify();
+                .verifyComplete();
     }
 
     @Test
@@ -26,8 +25,7 @@ public class Kata6_Transform {
 
         StepVerifier.create(flux)
                 .expectNext(EXPECTED)
-                .expectComplete()
-                .verify();
+                .verifyComplete();
     }
 
     private Flux<Integer> evenSquares(Flux<Integer> source) {

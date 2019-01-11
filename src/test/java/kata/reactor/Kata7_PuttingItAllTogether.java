@@ -40,8 +40,7 @@ class Kata7_PuttingItAllTogether {
 
         StepVerifier.create(renderer.createRenderingMono())
                 .expectNext("en{[template: test]}en{[component: Component1]}en{[component: Component2]}en{[component: Component3]}")
-                .expectComplete()
-                .verify();
+                .verifyComplete();
     }
 
     @Test
@@ -50,8 +49,7 @@ class Kata7_PuttingItAllTogether {
 
         StepVerifier.create(renderer.createRenderingMono())
                 .expectNext("en{[template: test]}en{[component: Component1]}en{[component: Component3]}")
-                .expectComplete()
-                .verify();
+                .verifyComplete();
     }
 
     private static final Mono<String> LANGUAGE_MONO = Mono.just("en");

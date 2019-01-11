@@ -13,25 +13,22 @@ public class Kata2_IntroToFlux {
         @Test
         void noOp_using_block() {
             Integer INPUT = 1;
-            Integer expected = INPUT;
 
             Integer output =
                     Flux.just(INPUT)
                             .blockFirst();
 
-            assertEquals(expected, output);
+            assertEquals(INPUT, output);
         }
 
         @Test
         void noOp_using_StepVerifier() {
             Integer INPUT = 1;
-            Integer expected = INPUT;
             Flux flux = Flux.just(INPUT);
 
             StepVerifier.create(flux)
-                    .expectNext(expected)
-                    .expectComplete()
-                    .verify();
+                    .expectNext(INPUT)
+                    .verifyComplete();
         }
     }
 
@@ -40,27 +37,23 @@ public class Kata2_IntroToFlux {
         @Test
         void mapIntegerToString() {
             Integer INPUT = 1;
-            String expected = Integer.toString(INPUT);
             Flux flux = Flux.just(INPUT)
                     .map(i -> Integer.toString(i));
 
             StepVerifier.create(flux)
-                    .expectNext(expected)
-                    .expectComplete()
-                    .verify();
+                    .expectNext("1")
+                    .verifyComplete();
         }
 
         @Test
         void flatMapIntegerFluxToString() {
             Integer INPUT = 1;
-            String expected = Integer.toString(INPUT);
             Flux flux = Flux.just(INPUT)
                     .flatMap(i -> Flux.just(Integer.toString(i)));
 
             StepVerifier.create(flux)
-                    .expectNext(expected)
-                    .expectComplete()
-                    .verify();
+                    .expectNext("1")
+                    .verifyComplete();
         }
     }
 
@@ -69,12 +62,10 @@ public class Kata2_IntroToFlux {
         @Test
         void fluxFromRange() {
             Flux<Integer> flux = Flux.range(10, 5);
-            Integer[] EXPECTED = {10, 11, 12, 13, 14};
 
             StepVerifier.create(flux)
-                    .expectNext(EXPECTED)
-                    .expectComplete()
-                    .verify();
+                    .expectNext(10, 11, 12, 13, 14)
+                    .verifyComplete();
         }
 
         @Test
@@ -84,8 +75,7 @@ public class Kata2_IntroToFlux {
 
             StepVerifier.create(flux)
                     .expectNext(EXPECTED)
-                    .expectComplete()
-                    .verify();
+                    .verifyComplete();
         }
 
         @Test
@@ -93,12 +83,10 @@ public class Kata2_IntroToFlux {
             Flux<Integer> flux = Flux.range(1, 10)
                     .map(i -> i*i)
                     .filter(i -> i%2 == 0);
-            Integer[] EXPECTED = {4, 16, 36, 64, 100};
 
             StepVerifier.create(flux)
-                    .expectNext(EXPECTED)
-                    .expectComplete()
-                    .verify();
+                    .expectNext(4, 16, 36, 64, 100)
+                    .verifyComplete();
         }
     }
 }
