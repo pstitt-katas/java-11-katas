@@ -7,6 +7,7 @@ import org.mockito.stubbing.Answer;
 import reactor.core.publisher.Flux;
 import reactor.core.publisher.Mono;
 import reactor.test.StepVerifier;
+import reactor.util.function.Tuple2;
 
 import java.util.Arrays;
 import java.util.List;
@@ -117,29 +118,35 @@ class RendererImpl implements Renderer {
     public Mono<String> createRenderingMono() {
         return stub.getLanguage()
                 .zipWith(stub.getComponents())
-                .flatMap(languageAndComponentListTuple -> {
-                    String language = languageAndComponentListTuple.getT1();
-                    List<String> components = languageAndComponentListTuple.getT2();
+                .flatMap(this::renderComponentsInLanguage);
+    }
 
-                    return stub.getTemplateMarkup(language)
-                            .flatMap(content -> stub.localise(content, language))
-                            .zipWith(
-                                    Flux.fromIterable(components)
-                                            .flatMap(component ->
-                                                    stub.getComponentMarkup(component, language)
-                                                            .onErrorReturn("")
-                                            )
-                                            .flatMap(content ->
-                                                    stub.localise(content, language)
-                                                            .onErrorReturn("")
-                                            )
-                                            .collectSortedList()
-                            )
-                            .map(contentTuple -> {
-                                String templateContent = contentTuple.getT1();
-                                List<String> componentList = contentTuple.getT2();
-                                return templateContent + String.join("", componentList);
-                            });
-                });
+    private Mono<String> renderComponentsInLanguage(Tuple2<String, List<String>> languageAndComponents) {
+        String language = languageAndComponents.getT1();
+        List<String> components = languageAndComponents.getT2();
+
+        return stub.getTemplateMarkup(language)
+                .flatMap(content -> stub.localise(content, language))
+                .zipWith(getLocalisedComponentMarkupList(language, components))
+                .map(this::combineTemplateMarkupWithComponentsMarkup);
+    }
+
+    private String combineTemplateMarkupWithComponentsMarkup(Tuple2<String, List<String>> templateAndComponents) {
+        String templateContent = templateAndComponents.getT1();
+        List<String> componentList = templateAndComponents.getT2();
+        return templateContent + String.join("", componentList);
+    }
+
+    private Mono<List<String>> getLocalisedComponentMarkupList(String language, List<String> components) {
+        return Flux.fromIterable(components)
+                .flatMap(component ->
+                        stub.getComponentMarkup(component, language)
+                                .onErrorReturn("")
+                )
+                .flatMap(content ->
+                        stub.localise(content, language)
+                                .onErrorReturn("")
+                )
+                .collectSortedList();
     }
 }

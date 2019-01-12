@@ -20,11 +20,12 @@ public class Kata5_Threading {
     void defaultThreads() {
         Mono<Collection<String>> threadsMono = Flux.range(1, 5)
                 .map(i -> Thread.currentThread().getName())
+                .doOnNext(t -> log.info("default thread: {}", t))
                 .collectSortedList(String::compareTo)
                 .map(this::toSet);
 
         StepVerifier.create(threadsMono)
-                .expectNextMatches(threads -> threads.size() == 1 && threadsEachMatch(threads, "main"))
+                .expectNextMatches(threads -> threads.size() == 1)
                 .verifyComplete();
     }
 
